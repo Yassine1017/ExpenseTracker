@@ -1,0 +1,30 @@
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+.flask_session_secret
+
+# Private financial data and backups
+expense_tracker.db
+expense_tracker.db-*
+*.db-journal
+*.db-shm
+*.db-wal
+backups/
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Frontend dependencies and generated output
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Local logs and operating-system files
+*.log
+.DS_Store
+Thumbs.db

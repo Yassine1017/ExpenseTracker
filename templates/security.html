@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Security | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <div>
+        <h1>Security</h1>
+        <p class="page-subtitle">Use this key for iPhone Shortcuts and API write requests.</p>
+    </div>
+</section>
+
+{% if success %}
+    <section class="notice success">
+        <strong>{{ success }}</strong>
+    </section>
+{% endif %}
+
+<section class="panel setup-panel">
+    <h2>Current API key</h2>
+    <p class="help-text">
+        Keep this private. Shortcuts should send it as the X-API-Key header when posting SMS messages.
+    </p>
+    <div class="api-key-box">
+        <code>{{ current_api_key }}</code>
+    </div>
+
+    <form class="confirm-actions" method="post" action="{{ url_for('security') }}">
+        <input type="hidden" name="api_key" value="{{ current_api_key }}">
+        <button class="button danger-button" type="submit">Regenerate API key</button>
+    </form>
+</section>
+{% endblock %}

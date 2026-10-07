@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Import Message | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>Import message</h1>
+    <a class="button" href="{{ url_for('shortcut_setup') }}">Shortcut setup</a>
+</section>
+
+{% if error %}
+    <section class="notice warning">
+        <strong>Import failed</strong>
+        <span>{{ error }}</span>
+    </section>
+{% endif %}
+
+{% if success_message %}
+    <section class="notice success">
+        <strong>Message parsed</strong>
+        <span>{{ success_message }}</span>
+    </section>
+{% endif %}
+
+{% if duplicate_message %}
+    <section class="notice warning">
+        <strong>Duplicate ignored</strong>
+        <span>{{ duplicate_message }}</span>
+    </section>
+{% endif %}
+
+<form class="form-panel wide-form" method="post">
+    <input type="hidden" name="api_key" value="{{ api_key }}">
+
+    <label for="raw_message">SMS message</label>
+    <textarea
+        id="raw_message"
+        name="raw_message"
+        rows="8"
+        placeholder="Paste a BBK SMS message that contains BHD"
+        required
+    >{{ raw_message }}</textarea>
+
+    <p class="help-text">
+        The importer extracts bank card details and ignores duplicate SMS messages so spending is not counted twice.
+    </p>
+
+    <button class="button" type="submit">Import message</button>
+</form>
+{% endblock %}

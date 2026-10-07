@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Add Transaction | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>Add transaction</h1>
+</section>
+
+<form class="form-panel" method="post">
+    <label for="date">Date</label>
+    <input id="date" name="date" type="date" value="{{ today }}" required>
+
+    <label for="amount">Amount</label>
+    <input id="amount" name="amount" type="number" min="0" step="0.001" placeholder="0.000" required>
+
+    <label for="merchant">Merchant</label>
+    <input id="merchant" name="merchant" type="text" placeholder="Coffee shop, friend paid back, supermarket" required>
+
+    <label for="category">Category</label>
+    <select id="category" name="category" required>
+        {% for category in categories %}
+            <option value="{{ category }}">{{ category }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="source">Source</label>
+    <input id="source" name="source" type="text" placeholder="Cash, Card, Bank, Wallet" required>
+
+    <button class="button" type="submit">Save transaction</button>
+</form>
+{% endblock %}

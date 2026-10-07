@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <div>
+        <h1>Dashboard</h1>
+        <p class="page-subtitle">{{ selected_month.label }}</p>
+    </div>
+    <div class="title-actions">
+        <form class="filter-form" method="get" action="{{ url_for('index') }}">
+            <label for="dashboard-month">Month</label>
+            <input id="dashboard-month" type="month" name="month" value="{{ selected_month.value }}">
+            <button class="small-button" type="submit">View</button>
+            <a class="small-button" href="{{ url_for('reports', month=selected_month.value) }}">Get monthly report</a>
+        </form>
+        <a class="button" href="{{ url_for('add_transaction') }}">Add transaction</a>
+    </div>
+</section>
+
+<section class="summary-grid">
+    <article class="summary-card">
+        <p>Today's spending</p>
+        <strong>{{ "%.3f"|format(today_spending) }}</strong>
+    </article>
+    <article class="summary-card expense">
+        <p>Total expenses</p>
+        <strong>{{ "%.3f"|format(total_expenses) }}</strong>
+    </article>
+    <article class="summary-card income">
+        <p>Total income</p>
+        <strong>{{ "%.3f"|format(total_income) }}</strong>
+    </article>
+    <article class="summary-card">
+        <p>{% if selected_month.is_current %}Predicted spending{% else %}Selected month spending{% endif %}</p>
+        <strong>{{ "%.3f"|format(monthly_prediction) }}</strong>
+    </article>
+</section>
+
+{% if budget_warning %}
+    <section class="notice warning">
+        <strong>Budget warning</strong>
+        <span>{{ budget_warning }} Limit: {{ "%.3f"|format(monthly_budget_limit) }}</span>
+    </section>
+{% endif %}
+
+{% if category_budget_statuses %}
+    <section class="panel budget-panel">
+        <h2>Category budgets</h2>
+        <div class="budget-list">
+            {% for budget in category_budget_statuses %}
+                <article class="budget-row">
+                    <div class="budget-row-header">
+                        <strong>{{ budget.category }}</strong>
+                        <span>
+                            {{ "%.3f"|format(budget.spent) }} / {{ "%.3f"|format(budget.monthly_limit) }}
+                        </span>
+                    </div>
+                    <div class="progress-track">
+                        <div
+                            class="progress-fill {% if budget.is_over %}over{% elif budget.is_warning %}warning{% endif %}"
+                            style="width: {{ [budget.percent_used, 100]|min }}%;"
+                        ></div>
+                    </div>
+                    <span class="budget-percent">{{ "%.0f"|format(budget.percent_used) }}% used</span>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+<section class="panel recent-panel">
+    <h2>Recent transactions</h2>
+    {% if recent_transactions %}
+        <ul class="transaction-list">
+            {% for transaction in recent_transactions %}
+                <li>
+                    <div>
+                        <strong>{{ transaction.display_merchant }}</strong>
+                        <span>{{ transaction.date }} - {{ transaction.category }}</span>
+                    </div>
+                    <span class="amount {% if transaction.category == 'Income' %}positive{% endif %}">
+                        {{ "%.3f"|format(transaction.amount) }}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty">No transactions in this month.</p>
+    {% endif %}
+</section>
+
+{% if category_chart_rows %}
+    <section class="panel chart-panel">
+        <h2>Category spending chart</h2>
+        <div class="bar-chart">
+            {% for item in category_chart_rows %}
+                <div class="bar-row">
+                    <div class="bar-label">
+                        <span class="category-dot" style="background: {{ item.color }};"></span>
+                        <strong>{{ item.category }}</strong>
+                        <span>{{ "%.3f"|format(item.total) }}</span>
+                    </div>
+                    <div class="bar-track">
+                        <div
+                            class="bar-fill"
+                            style="width: {{ item.percent }}%; background: {{ item.color }};"
+                        ></div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+<section class="panel recurring-panel">
+    <h2>Possible recurring merchants</h2>
+    {% if recurring_merchants %}
+        <ul class="category-list">
+            {% for merchant in recurring_merchants %}
+                <li>
+                    <span>
+                        <strong>{{ merchant.merchant }}</strong>
+                        {{ merchant.transaction_count }} times across {{ merchant.months_seen }} month{% if merchant.months_seen != 1 %}s{% endif %}
+                    </span>
+                    <strong>{{ "%.3f"|format(merchant.average_amount) }}</strong>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty">No repeated merchants detected yet.</p>
+    {% endif %}
+</section>
+
+<section class="panel alert-panel">
+    <h2>Unusual transaction alerts</h2>
+    {% if unusual_alerts %}
+        <ul class="transaction-list">
+            {% for alert in unusual_alerts %}
+                <li>
+                    <div>
+                        <strong>{{ alert.transaction.display_merchant }}</strong>
+                        <span>{{ alert.transaction.date }} - {{ alert.transaction.category }}</span>
+                        <span>{{ alert.reason }}</span>
+                    </div>
+                    <span class="amount">{{ "%.3f"|format(alert.transaction.amount) }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty">No unusual transactions detected for this month.</p>
+    {% endif %}
+</section>
+
+<section class="panel automation-panel">
+    <h2>Automation health</h2>
+    <div class="health-grid">
+        <div>
+            <span>Last status</span>
+            <strong>{{ automation_health.last_status }}</strong>
+        </div>
+        <div>
+            <span>Last import</span>
+            <strong>{{ automation_health.last_time }}</strong>
+        </div>
+        <div>
+            <span>Last merchant</span>
+            <strong>{{ automation_health.last_merchant }}</strong>
+        </div>
+        <div>
+            <span>Today</span>
+            <strong>{{ automation_health.imports_today }} imports</strong>
+        </div>
+        <div>
+            <span>Failed today</span>
+            <strong>{{ automation_health.failed_today }}</strong>
+        </div>
+        <div>
+            <span>Duplicates today</span>
+            <strong>{{ automation_health.duplicates_today }}</strong>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Transaction | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>Delete transaction?</h1>
+</section>
+
+<section class="panel confirm-panel">
+    <p class="confirm-message">
+        Are you sure you want to delete this transaction? This cannot be undone.
+    </p>
+
+    <dl class="transaction-details">
+        <div>
+            <dt>Date</dt>
+            <dd>{{ transaction.date }}</dd>
+        </div>
+        <div>
+            <dt>Merchant</dt>
+            <dd>{{ transaction.merchant }}</dd>
+        </div>
+        <div>
+            <dt>Category</dt>
+            <dd>{{ transaction.category }}</dd>
+        </div>
+        <div>
+            <dt>Source</dt>
+            <dd>{{ transaction.source }}</dd>
+        </div>
+        <div>
+            <dt>Amount</dt>
+            <dd>{{ "%.3f"|format(transaction.amount) }}</dd>
+        </div>
+    </dl>
+
+    <div class="confirm-actions">
+        <a class="small-button" href="{{ url_for('transactions') }}">Cancel</a>
+        <form method="post" action="{{ url_for('delete_transaction', transaction_id=transaction.id) }}">
+            <button class="button danger-button" type="submit">Yes, delete it</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

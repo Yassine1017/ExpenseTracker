@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Category Budgets | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>Category budgets</h1>
+</section>
+
+<form class="form-panel wide-form" method="post">
+    <p class="help-text">
+        Set your full monthly budget and category limits. Use 0 to clear a category budget.
+    </p>
+
+    <label for="monthly_budget_limit">Full monthly budget</label>
+    <input
+        id="monthly_budget_limit"
+        name="monthly_budget_limit"
+        type="number"
+        min="0"
+        step="0.001"
+        value="{{ monthly_budget_limit }}"
+        required
+    >
+
+    <h2>Category limits</h2>
+
+    <div class="budget-input-grid">
+        {% for row in category_budget_rows %}
+            <div>
+                <label for="budget_{{ row.category }}">{{ row.category }}</label>
+                <input
+                    id="budget_{{ row.category }}"
+                    name="budget_{{ row.category }}"
+                    type="number"
+                    min="0"
+                    step="0.001"
+                    value="{{ row.monthly_limit }}"
+                >
+            </div>
+        {% endfor %}
+    </div>
+
+    <button class="button" type="submit">Save budgets</button>
+</form>
+{% endblock %}

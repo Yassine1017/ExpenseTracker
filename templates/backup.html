@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Backup | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <div>
+        <h1>Backup and restore</h1>
+        <p class="page-subtitle">Protect your transactions, imports, rules, budgets, and settings.</p>
+    </div>
+</section>
+
+{% if success %}
+    <section class="notice success">
+        <strong>{{ success }}</strong>
+        {% if safety_backup_path %}
+            <span>Your previous database was saved first at {{ safety_backup_path }}.</span>
+        {% endif %}
+    </section>
+{% endif %}
+
+{% if error %}
+    <section class="notice warning">
+        <strong>Restore failed</strong>
+        <span>{{ error }}</span>
+    </section>
+{% endif %}
+
+<section class="two-column backup-layout">
+    <article class="panel">
+        <h2>Download backup</h2>
+        <p class="help-text">
+            This downloads your current SQLite database as a .db file. Keep it somewhere safe like OneDrive, iCloud Drive, or a USB drive.
+        </p>
+        <a class="button" href="{{ url_for('download_backup', api_key=api_key) }}">Download current database</a>
+    </article>
+
+    <form class="form-panel" method="post" action="{{ url_for('backup') }}" enctype="multipart/form-data">
+        <input type="hidden" name="api_key" value="{{ api_key }}">
+
+        <h2>Restore backup</h2>
+        <p class="help-text">
+            Restoring replaces the current database with the uploaded backup. The app first saves a before-restore copy as a safety fallback.
+        </p>
+        <label for="backup-file">Backup file</label>
+        <input id="backup-file" type="file" name="backup_file" accept=".db,.sqlite,.sqlite3" required>
+        <button class="button danger-button" type="submit">Restore uploaded backup</button>
+    </form>
+</section>
+{% endblock %}

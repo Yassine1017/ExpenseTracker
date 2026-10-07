@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Accept Invite - Expense Tracker</title>
+    <style>
+      :root {
+        color: #102331;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f2f8fb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+      }
+
+      main {
+        width: min(100%, 440px);
+        padding: 24px;
+        border: 1px solid #d1e2ea;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 16px 42px rgba(22, 92, 111, 0.12);
+      }
+
+      span {
+        color: #16a6a0;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 8px 0 8px;
+        font-size: 28px;
+      }
+
+      p {
+        margin: 0 0 18px;
+        color: #395666;
+        font-weight: 600;
+        line-height: 1.5;
+      }
+
+      form {
+        display: grid;
+        gap: 13px;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        color: #395666;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      input {
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid #d1e2ea;
+        border-radius: 8px;
+        font: inherit;
+      }
+
+      button {
+        min-height: 44px;
+        border: 0;
+        border-radius: 8px;
+        background: #16a6a0;
+        color: #ffffff;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .error {
+        margin-bottom: 14px;
+        padding: 10px 12px;
+        border: 1px solid #f3bdc8;
+        border-radius: 8px;
+        background: #fde1e8;
+        color: #9f263f;
+        font-size: 14px;
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <span>Private invite</span>
+      <h1>Create your password</h1>
+      <p>
+        This invite creates the account <strong>{{ invite.display_name }}</strong>
+        with username <strong>{{ invite.username }}</strong>. Choose a password
+        only you know.
+      </p>
+
+      {% if error %}
+        <div class="error">{{ error }}</div>
+      {% endif %}
+
+      <form method="post">
+        <label>
+          Password
+          <input autofocus required minlength="8" name="password" type="password" autocomplete="new-password">
+        </label>
+        <label>
+          Confirm password
+          <input required minlength="8" name="confirm_password" type="password" autocomplete="new-password">
+        </label>
+        <button type="submit">Create account</button>
+      </form>
+    </main>
+  </body>
+</html>

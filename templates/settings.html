@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Settings | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>Settings</h1>
+</section>
+
+<form class="form-panel" method="post">
+    <label for="monthly_budget_limit">Monthly budget limit</label>
+    <input
+        id="monthly_budget_limit"
+        name="monthly_budget_limit"
+        type="number"
+        min="0"
+        step="0.001"
+        value="{{ monthly_budget_limit }}"
+        required
+    >
+
+    <p class="help-text">
+        This value is used for dashboard budget warnings and monthly prediction warnings.
+    </p>
+
+    <button class="button" type="submit">Save settings</button>
+</form>
+{% endblock %}

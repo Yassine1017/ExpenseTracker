@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Reports | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <div>
+        <h1>Monthly report</h1>
+        <p class="page-subtitle">{{ selected_month.label }}</p>
+    </div>
+    <div class="title-actions">
+        <form class="filter-form" method="get" action="{{ url_for('reports') }}">
+            <label for="report-month">Month</label>
+            <input id="report-month" type="month" name="month" value="{{ selected_month.value }}">
+            <button class="small-button" type="submit">View</button>
+        </form>
+        <a class="button" href="{{ url_for('export_monthly_report_csv', month=selected_month.value) }}">Export CSV</a>
+    </div>
+</section>
+
+<section class="summary-grid report-summary-grid">
+    <article class="summary-card expense">
+        <p>Total expenses</p>
+        <strong>{{ "%.3f"|format(totals.expenses) }}</strong>
+    </article>
+    <article class="summary-card income">
+        <p>Total income</p>
+        <strong>{{ "%.3f"|format(totals.income) }}</strong>
+    </article>
+    <article class="summary-card">
+        <p>Net</p>
+        <strong>{{ "%.3f"|format(totals.income - totals.expenses) }}</strong>
+    </article>
+    <article class="summary-card">
+        <p>Transactions</p>
+        <strong>{{ transaction_count }}</strong>
+    </article>
+</section>
+
+<section class="panel">
+    <h2>Category totals</h2>
+    {% if category_rows %}
+        <ul class="category-list">
+            {% for row in category_rows %}
+                <li>
+                    <span>{{ row.category }}</span>
+                    <strong>{{ "%.3f"|format(row.total) }}</strong>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty">No spending in this month.</p>
+    {% endif %}
+</section>
+{% endblock %}

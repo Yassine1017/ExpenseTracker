@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Security Error | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="panel confirm-panel">
+    <h1>Security check failed</h1>
+    <p class="confirm-message">{{ error }}</p>
+    <a class="button" href="{{ url_for('security') }}">View security settings</a>
+</section>
+{% endblock %}

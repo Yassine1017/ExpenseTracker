@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Category Rules | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>Category rules</h1>
+</section>
+
+<section class="two-column rules-layout">
+    <form class="form-panel" method="post">
+        <label for="keyword">Merchant keyword</label>
+        <input id="keyword" name="keyword" type="text" placeholder="MCDONALDS" required>
+
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+            {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select>
+
+        <p class="help-text">
+            If the merchant contains this keyword, imported SMS transactions use the selected category.
+        </p>
+
+        <button class="button" type="submit">Save rule</button>
+    </form>
+
+    <section class="panel">
+        <h2>Saved rules</h2>
+        {% if rules %}
+            <ul class="rule-list">
+                {% for rule in rules %}
+                    <li>
+                        <div>
+                            <strong>{{ rule.keyword }}</strong>
+                            <span>{{ rule.category }}</span>
+                        </div>
+                        <form method="post" action="{{ url_for('delete_category_rule', rule_id=rule.id) }}">
+                            <button class="small-button danger" type="submit">Delete</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty">No category rules yet.</p>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

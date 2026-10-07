@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Shortcut Setup | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>iPhone Shortcut setup</h1>
+</section>
+
+<section class="panel setup-panel">
+    <h2>Shortcut request settings</h2>
+
+    <dl class="transaction-details">
+        <div>
+            <dt>URL</dt>
+            <dd><code>{{ import_url }}</code></dd>
+        </div>
+        <div>
+            <dt>Method</dt>
+            <dd><code>POST</code></dd>
+        </div>
+        <div>
+            <dt>Header</dt>
+            <dd><code>ngrok-skip-browser-warning: true</code></dd>
+        </div>
+        <div>
+            <dt>Header</dt>
+            <dd><code>X-API-Key: {{ api_key }}</code></dd>
+        </div>
+        <div>
+            <dt>Body</dt>
+            <dd><code>JSON</code>, <code>Form</code>, or raw text</dd>
+        </div>
+        <div>
+            <dt>Field</dt>
+            <dd><code>raw_message</code></dd>
+        </div>
+    </dl>
+
+    <h2>Build it in Shortcuts</h2>
+    <ol class="steps-list">
+        <li>Create a new Shortcut.</li>
+        <li>Add a Text action and paste a test BBK SMS message that contains BHD.</li>
+        <li>Add Get Contents of URL.</li>
+        <li>Set the URL to the import URL above.</li>
+        <li>Set Method to POST.</li>
+        <li>Add the header ngrok-skip-browser-warning with value true.</li>
+        <li>Add the header X-API-Key with the API key shown above.</li>
+        <li>Set Request Body to JSON or Form.</li>
+        <li>Add raw_message and connect it to the Text action.</li>
+        <li>If JSON/Form is confusing, send the received message as raw text body instead.</li>
+        <li>Run the Shortcut, then check the Transactions page.</li>
+    </ol>
+</section>
+{% endblock %}

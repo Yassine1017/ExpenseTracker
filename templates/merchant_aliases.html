@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Merchant Aliases | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <div>
+        <h1>Merchant aliases</h1>
+        <p class="page-subtitle">Clean up messy bank merchant names for display.</p>
+    </div>
+</section>
+
+<section class="two-column rules-layout">
+    <form class="form-panel" method="post" action="{{ url_for('merchant_aliases') }}">
+        <h2>Add alias</h2>
+        <label for="keyword">Merchant contains</label>
+        <input id="keyword" name="keyword" placeholder="OPENAI" required>
+
+        <label for="display_name">Show as</label>
+        <input id="display_name" name="display_name" placeholder="OpenAI / ChatGPT" required>
+
+        <button class="button" type="submit">Save alias</button>
+    </form>
+
+    <article class="panel">
+        <h2>Saved aliases</h2>
+        {% if aliases %}
+            <ul class="rule-list">
+                {% for alias in aliases %}
+                    <li>
+                        <div>
+                            <strong>{{ alias.keyword }}</strong>
+                            <span>{{ alias.display_name }}</span>
+                        </div>
+                        <form method="post" action="{{ url_for('delete_merchant_alias', alias_id=alias.id) }}">
+                            <button class="small-button danger" type="submit">Delete</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty">No merchant aliases yet.</p>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

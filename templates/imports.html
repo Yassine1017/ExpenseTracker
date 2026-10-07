@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Import History | Expense Tracker{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>Import history</h1>
+    <a class="button" href="{{ url_for('import_message') }}">Import message</a>
+</section>
+
+{% if imports %}
+    <section class="panel cleanup-panel">
+        <h2>Cleanup</h2>
+        <div class="cleanup-actions">
+            <form method="post" action="{{ url_for('clear_failed_imports') }}">
+                <button class="small-button danger" type="submit">Clear failed imports</button>
+            </form>
+            <form method="post" action="{{ url_for('clear_duplicate_imports') }}">
+                <button class="small-button danger" type="submit">Clear duplicate imports</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="review-list">
+        {% for item in imports %}
+            <article class="panel review-card">
+                <div class="review-header">
+                    <div>
+                        <strong>{{ item.parsed_merchant or "Unknown merchant" }}</strong>
+                        <span>{{ item.created_at }}</span>
+                    </div>
+                    <span class="status-pill {% if item.status == 'Saved as transaction' %}success{% elif item.status == 'Needs category rule' or item.status == 'Duplicate ignored' %}warning{% else %}muted{% endif %}">
+                        {{ item.status }}
+                    </span>
+                </div>
+
+                <form class="delete-import-form" method="post" action="{{ url_for('delete_import', import_id=item.id) }}">
+                    <button class="small-button danger" type="submit">Delete import row</button>
+                </form>
+
+                <dl class="review-details">
+                    <div>
+                        <dt>Amount</dt>
+                        <dd>
+                            {% if item.parsed_amount %}
+                                {{ item.parsed_currency }} {{ "%.3f"|format(item.parsed_amount) }}
+                            {% elif item.is_duplicate and item.transaction_amount %}
+                                Duplicate of {{ "%.3f"|format(item.transaction_amount) }}
+                            {% else %}
+                                Not parsed
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Date text</dt>
+                        <dd>{{ item.parsed_date_text or "Not parsed" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Transaction</dt>
+                        <dd>
+                            {% if item.transaction_id %}
+                                #{{ item.transaction_id }} - {{ item.transaction_category }}
+                            {% else %}
+                                Not created
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+
+                {% if item.parsed_amount and item.parsed_currency != "BHD" and not item.transaction_id %}
+                    <form class="inline-form conversion-form" method="post" action="{{ url_for('convert_currency_import', import_id=item.id) }}">
+                        <label for="exchange-rate-{{ item.id }}">Convert {{ item.parsed_currency }} to BHD</label>
+                        <input
+                            id="exchange-rate-{{ item.id }}"
+                            type="number"
+                            name="exchange_rate"
+                            min="0.000001"
+                            step="0.000001"
+                            value="{% if item.parsed_currency == 'USD' %}{{ default_usd_to_bhd_rate }}{% endif %}"
+                            placeholder="Exchange rate to BHD"
+                            required
+                        >
+                        <button class="small-button" type="submit">Save BHD transaction</button>
+                    </form>
+                {% endif %}
+
+                {% if item.transaction_id and item.transaction_category == "Other" and item.parsed_merchant %}
+                    <div class="ai-suggestion-box">
+                        {% if item.ai_suggested_category %}
+                            <strong>AI suggestion: {{ item.ai_suggested_category }}</strong>
+                            <span>{{ item.ai_suggestion_reason }}</span>
+                            <form method="post" action="{{ url_for('apply_ai_category_for_import', import_id=item.id) }}">
+                                <button class="small-button" type="submit">Apply AI suggestion</button>
+                            </form>
+                        {% elif item.ai_suggestion_reason %}
+                            <strong>AI suggestion unavailable</strong>
+                            <span>{{ item.ai_suggestion_reason }}</span>
+                        {% else %}
+                            <form method="post" action="{{ url_for('suggest_category_for_import', import_id=item.id) }}">
+                                <button class="small-button" type="submit">Suggest category with AI</button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <form class="inline-form" method="post" action="{{ url_for('create_rule_from_import', import_id=item.id) }}">
+                        <label for="category-{{ item.id }}">Create rule</label>
+                        <select id="category-{{ item.id }}" name="category" required>
+                            {% for category in categories %}
+                                <option value="{{ category }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="small-button" type="submit">Save rule</button>
+                    </form>
+                {% endif %}
+
+                <details class="raw-message">
+                    <summary>Raw SMS</summary>
+                    <p>{{ item.redacted_raw_message }}</p>
+                </details>
+            </article>
+        {% endfor %}
+    </section>
+{% else %}
+    <section class="panel">
+        <p class="empty">No imported messages yet.</p>
+    </section>
+{% endif %}
+{% endblock %}

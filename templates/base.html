@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Expense Tracker{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav">
+            <a class="brand" href="{{ url_for('index') }}">Expense Tracker</a>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">React</a>
+                <a href="{{ url_for('classic_dashboard') }}">Classic</a>
+                <a href="{{ url_for('add_transaction') }}">Add</a>
+                <a href="{{ url_for('transactions') }}">Transactions</a>
+                <a href="{{ url_for('reports') }}">Reports</a>
+                <details class="nav-more">
+                    <summary>More</summary>
+                    <div class="nav-more-menu">
+                        <a href="{{ url_for('import_message') }}">Import message</a>
+                        <a href="{{ url_for('imports') }}">Import history</a>
+                        <a href="{{ url_for('shortcut_setup') }}">Shortcut setup</a>
+                        <a href="{{ url_for('category_rules') }}">Category rules</a>
+                        <a href="{{ url_for('merchant_aliases') }}">Merchant aliases</a>
+                        <a href="{{ url_for('category_budgets') }}">Budgets</a>
+                        <a href="{{ url_for('backup') }}">Backup</a>
+                        <a href="{{ url_for('security') }}">Security</a>
+                        <a href="{{ url_for('settings') }}">Settings</a>
+                    </div>
+                </details>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
